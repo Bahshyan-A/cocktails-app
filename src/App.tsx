@@ -1,26 +1,29 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import "./App.css";
+import { observer } from "mobx-react";
+import { useRootStore } from "./hooks/useStore";
+import RecipesAPI from "./api/cocktails";
 
-function App() {
+const App = observer(() => {
+  const { cocktails } = useRootStore();
+  const recipes = new RecipesAPI();
+
+  const setRandomCocktail = async () => {
+    let randomCocktail = await recipes.getRandomRecipe();
+    if(randomCocktail) cocktails.setRandomCocktail(randomCocktail);
+  };
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <div className="App">
+        <h2>Random Drink</h2>
+        {cocktails.randomCocktail !== null && (
+          <span>{cocktails.randomCocktail.name}</span>
+        )}
+      </div>
+
+      <button onClick={setRandomCocktail}>get random</button>
+    </>
   );
-}
+});
 
 export default App;
