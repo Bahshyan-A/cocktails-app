@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import "./App.css";
 import { observer } from "mobx-react";
 import { useRootStore } from "./hooks/useStore";
 import RecipesAPI from "./api/cocktails";
+import { CocktailCard } from "./components/cocktail-card/CocktailCard";
+import { Button } from "antd";
 
 const App = observer(() => {
   const { cocktails } = useRootStore();
@@ -10,19 +12,38 @@ const App = observer(() => {
 
   const setRandomCocktail = async () => {
     let randomCocktail = await recipes.getRandomRecipe();
-    if(randomCocktail) cocktails.setRandomCocktail(randomCocktail);
+    if (randomCocktail) cocktails.setRandomCocktail(randomCocktail);
   };
-  return (
-    <>
-      <div className="App">
-        <h2>Random Drink</h2>
-        {cocktails.randomCocktail !== null && (
-          <span>{cocktails.randomCocktail.name}</span>
-        )}
-      </div>
 
-      <button onClick={setRandomCocktail}>get random</button>
-    </>
+  useEffect(() => {
+    setRandomCocktail();
+  }, []);
+
+  let randomCocktail = useMemo(
+    () => cocktails.randomCocktail,
+    [cocktails.randomCocktail]
+  );
+
+  return (
+    <div className="App">
+      <h1>Random Drink</h1>
+      {randomCocktail !== null && (
+        <CocktailCard
+          name={randomCocktail.name}
+          id={randomCocktail.id}
+          category={randomCocktail.category}
+          imgURL={randomCocktail.imgURL}
+          size={480}
+        />
+      )}
+      <Button
+        size="large"
+        onClick={setRandomCocktail}
+        type="primary"
+      >
+        Random Cocktail
+      </Button>
+    </div>
   );
 });
 

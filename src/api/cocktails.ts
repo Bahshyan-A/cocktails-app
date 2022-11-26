@@ -15,7 +15,7 @@ export default class CocktailsAPI {
 
    await axios.get(this.url + "random" + this.urlFileExtension).then(resp => {
       let data = resp.data.drinks[0];
-      cocktail = {id: data.idDrink, name: data.strDrink}
+      cocktail = {id: data.idDrink, name: data.strDrink, category: data.strCategory, imgURL: data.strDrinkThumb}
     }) 
    return cocktail
   }
